@@ -1,5 +1,6 @@
 package automation.pageLocator;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class Login_page {
     WebDriver driver;
     //gotoLogin
-    @FindBy(xpath = "//body/div[@id='app']/div[1]/div[1]/div[2]/div[4]/div[1]/a[1]")
+    @FindBy(xpath = "(//a[contains(text(),'Login')])[1]")
     private WebElement btn_GotoLogin;
     @FindBy(xpath = "//input[@id='username']")
     private WebElement txtUserName;
@@ -26,9 +27,10 @@ public class Login_page {
         PageFactory.initElements(driver, this);
     }
 
-    public void LoginFunction(String email, String password) {
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
-        btn_GotoLogin.click();
+    public void LoginFunction(String email, String password) throws InterruptedException {
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn_GotoLogin);
+//        btn_GotoLogin.click();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         txtUserName.clear();
         txtUserName.sendKeys(email);

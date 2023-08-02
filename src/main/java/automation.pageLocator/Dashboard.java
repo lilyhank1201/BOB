@@ -7,7 +7,7 @@ import org.openqa.selenium.support.PageFactory;
 
 public class Dashboard {
     WebDriver driver;
-    @FindBy(xpath = "//*[@id=\"app\"]/div/div[1]/div[2]/div[1]/a/img")
+    @FindBy(xpath = "//div[contains(text(),'Build the Future with')]")
     public static WebElement Home;
     @FindBy(xpath = "//a[contains(text(),'Markets')]")
     public static WebElement Menu_Market;

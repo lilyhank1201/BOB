@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.concurrent.TimeUnit;
+
 public class LoginRun extends CommonBase {
     WebDriver driver;
 
@@ -19,9 +21,9 @@ public class LoginRun extends CommonBase {
     public void LoginSuccessfully() throws InterruptedException {
         Login_page Login = new Login_page(driver);
         Login.LoginFunction("trangnth@timebird.org", "Te@12345");
-//        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-       // WebElement TitleHome = driver.findElement(Dashboard.Home);
- //        assertTrue(TitleHome.isDisplayed());
+        driver.manage().timeouts().pageLoadTimeout(100, TimeUnit.SECONDS);
+//        WebElement TitleHome = driver.findElement((By) Dashboard.Home);
+//         assertTrue(TitleHome.isDisplayed());
         driver.close();
     }
 }
