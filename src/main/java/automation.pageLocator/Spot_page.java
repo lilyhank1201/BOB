@@ -2,7 +2,6 @@ package automation.pageLocator;
 
 import automation.common.CommonBase;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,8 +13,10 @@ import org.testng.Assert;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+import static org.testng.Assert.assertTrue;
+
 public class Spot_page extends CommonBase {
-    WebDriver driver;
+    static WebDriver driver;
     //cross
     @FindBy(xpath = "/tr[@class='ant-table-row ant-table-row-level-0'])[1]")
     public static WebElement Cross_coin_BTC;
@@ -71,6 +72,8 @@ public class Spot_page extends CommonBase {
     public static WebElement Menu_spot;
     @FindBy(xpath = "Order total cannot be lower than : 10.00 USDT")
     public static By totallower;
+    @FindBy(xpath = "(//div[@class='list__box-available'])[1]")
+    public static By availableUSDT;
 
     public Spot_page(WebDriver driver) {
         this.driver = driver;
@@ -78,7 +81,7 @@ public class Spot_page extends CommonBase {
     }
 
 
-    public void BuySS(String price, String amount) throws InterruptedException {
+    public void suggest(String price, String amount) throws InterruptedException {
         Menu_spot.click();
         Duration timeout = Duration.ofSeconds(5);
         WebDriverWait wait = new WebDriverWait(driver, timeout);
@@ -112,7 +115,7 @@ public class Spot_page extends CommonBase {
         double epsilon = 0.0001;
         if (Math.abs(expectedTotalBuy - actualTotalBuy) < epsilon) {
             System.out.println("Hai giá trị trùng khớp tương đối.");
-            Assert.assertTrue(true);
+            assertTrue(true);
         } else {
             System.out.println("Hai giá trị không trùng khớp tương đối.");
             Assert.fail();
@@ -129,61 +132,110 @@ public class Spot_page extends CommonBase {
 
     }
 
-
-
-
-
-    public void BuySSS(String price, String amount) throws InterruptedException {
+    public void OrderNotFill(String price, String amount) throws InterruptedException {
         Menu_spot.click();
-        driver.findElement(By.xpath("//a[contains(text(),'Spot')]")).click();
+        Duration timeout = Duration.ofSeconds(5);
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),'Spot')]"))).click();
         Thread.sleep(1000);
-        Cross_coin_TRX.click();
+        wait.until(ExpectedConditions.visibilityOf(Cross_coin_TRX)).click();
         driver.manage().timeouts().pageLoadTimeout(3, TimeUnit.SECONDS);
-
-        // Kiểm tra xem giá trị truyền vào đã có trên màn hình hay chưa
-        String actualTotalBuyText = checkValueExists(price);
-
-        if (actualTotalBuyText == null) {
-            // Giá trị không có trên màn hình, thực hiện truyền giá trị vào
-            price_buy_locator.clear();
-            price_buy_locator.sendKeys(price);
-            amount_buy_locator.clear();
-            amount_buy_locator.sendKeys(amount);
-            btnBuyTRX.click();
-
+ //Check availabel Coin counter(USDT) truoc khi BUY
+        WebElement  availableUSDT = driver.findElement(By.xpath("(//div[@class='list__box-available'])[1]"));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        String   availableUSDTText = availableUSDT.getText();
+        // Loại bỏ các ký tự không phải số khỏi chuỗi
+        availableUSDTText = availableUSDTText.replaceAll("[^0-9.]", "");
+        double BeforeavailableUSDT = Double.parseDouble(availableUSDTText);
+        System.out.println("Available ban đầu " + BeforeavailableUSDT );
+//Check orderbook trước khi buy
+        Orderbook before = new Orderbook(driver);
+        double beforePrice = before.getAmountInOrderbookPrice("0.04000100");
+        System.out.println("Before Amount: " + beforePrice);
+        price_buy_locator.clear();
+        price_buy_locator.sendKeys(price);
+        amount_buy_locator.clear();
+        amount_buy_locator.sendKeys(amount);
+//tính total buy
+        double inputPriceBuy = Double.parseDouble(price);
+        int inputAmountBuy = Integer.parseInt(amount);
+        double expectedTotalBuy = inputPriceBuy * inputAmountBuy;
+        System.out.println(inputPriceBuy * inputAmountBuy);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Thread.sleep(3000);
+        WebElement totalBuyElement = driver.findElement(By.xpath("//div[@class='list__box buy']//div[@class='form__text']/p"));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        String actualTotalBuyText = totalBuyElement.getText();
+// Loại bỏ các ký tự không phải số khỏi chuỗi
+        actualTotalBuyText = actualTotalBuyText.replace(" USDT", "");
+        System.out.println(actualTotalBuyText);
+        //So sánh Actual và expected
+        double actualTotalBuy = Double.parseDouble(actualTotalBuyText);
+        double epsilon = 0.0001;// Độ sai số cho phép
+        if (Math.abs(expectedTotalBuy - actualTotalBuy) < epsilon) {
+            System.out.println("Hai giá trị trùng khớp tương đối.");
+            assertTrue(true);
         } else {
-            // Giá trị đã có trên màn hình, giữ nguyên giá trị và thực hiện truyền số lượng vào hàng chứa giá trị đã có
-            // Lấy số lượng hiện tại trong hàng chứa giá trị đã có
-            double currentAmount = Double.parseDouble(actualTotalBuyText.replace(" USDT", ""));
-            // Thêm số amount vào số amount hiện tại
-            double newAmount = currentAmount + Double.parseDouble(amount);
-            System.out.println(newAmount + "HIện");
-
-            // Truyền số lượng mới vào hàng chứa giá trị đã có
-            amount_buy_locator.clear();
-            amount_buy_locator.sendKeys(String.valueOf(newAmount));
-            System.out.println(currentAmount + "HIện");
-
+            System.out.println("Hai giá trị không trùng khớp tương đối.");
+            Assert.fail();
         }
-
-        // Tiếp tục các bước cần thiết sau khi truyền giá trị
-        // ...
-    }
-
-    public String checkValueExists(String price) {
-        try {
-            // Tìm phần tử chứa giá trị trên màn hình
-            WebElement totalBuyElement = driver.findElement(By.xpath("//div[@class='list__box buy']//div[@class='form__text']/p"));
-            String actualTotalBuyText = totalBuyElement.getText();
-            double currentAmount = Double.parseDouble(actualTotalBuyText.replace(" USDT", ""));
-            System.out.println(actualTotalBuyText + " hiển thị ");
-            if (actualTotalBuyText.contains(price)) {
-                return actualTotalBuyText;
+        if (actualTotalBuy >= 10.0) {
+            //Thực hiện buy
+            btnBuyTRX.click();
+            System.out.println("actualTotalBuyText >= 10$");
+            Thread.sleep(2000);
+//Tính available sau khi BUy = tay
+            double NewAvailable = BeforeavailableUSDT - expectedTotalBuy;
+//Check available Coin counter(USDT) sau khi BUY
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            String availableUSDTsau = availableUSDT.getText();
+            availableUSDTsau = availableUSDTsau.replaceAll("[^0-9.]", "");
+            double AfteravailableUSDT = Double.parseDouble(availableUSDTsau);
+            System.out.println("Available sau khi Buy " + BeforeavailableUSDT );
+//So sánh Available
+            Thread.sleep(2000);
+            if (Math.abs(NewAvailable - AfteravailableUSDT) <= epsilon) {
+                System.out.println("actual total is match with Expected");
             } else {
-                return null;
+                System.out.println("actual total is not match with Expected");
             }
-        } catch (NoSuchElementException e) {
-            return null;
+
+//Check orderbook after khi buy
+            String priceToFind = String.valueOf(price);
+            Orderbook orderbook = new Orderbook(driver);
+            boolean priceExists = orderbook.checkPriceExists(priceToFind);
+            if (priceExists) {
+                System.out.println(priceToFind + " có trên order book");
+                WebElement amountElement = driver.findElement((By) amount_buy_locator);
+                String currentAmountText = amountElement.getText();
+                System.out.println(currentAmountText);
+                double currentAmount = Double.parseDouble(currentAmountText);
+                double amountToAdd = 200;
+                double newAmount = currentAmount + amountToAdd;
+                System.out.println(newAmount + " Update amounnt on order book is successfully");
+                String newAmountText = String.valueOf(newAmount);
+                amountElement.clear();
+                amountElement.sendKeys(newAmountText);
+                System.out.println("Đã cộng 200 vào cột Amount: " + newAmountText);
+            } else {
+                String amountToEnter = "200";
+                enterPriceAndAmount(priceToFind, amountToEnter);
+                System.out.println("Create order is successfully");
+                driver.close();
+            }
+        } else {
+            driver.close();
+            System.out.println("actualTotalBuyText <  10$ -> Đóng trình duyệt");
         }
     }
+
+
+    private void enterPriceAndAmount(String priceToFind, String amountToEnter) {
+    }
+
+
 }
+
+
+
+ 

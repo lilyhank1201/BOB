@@ -28,7 +28,7 @@ public class Login_page {
     }
 
     public void LoginFunction(String email, String password) throws InterruptedException {
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+       Thread.sleep(2000);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn_GotoLogin);
 //        btn_GotoLogin.click();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
