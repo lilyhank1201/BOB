@@ -42,6 +42,6 @@ public class Spot_Buy extends CommonBase {
         Login_page Login = new Login_page(driver);
         Login.LoginFunction("trangnth@timebird.org", "Te@12345");
         Spot_page Buy = new Spot_page(driver);
-        Buy.OrderNotFill("0.040001", "250");
+        Buy.OrderNotFill("0.040000", "250");
     }
 }

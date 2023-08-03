@@ -47,13 +47,14 @@ public class Orderbook{
 
 
 
-        public boolean checkPriceExists(String price) {
+        public boolean checkPriceExists(String price) throws InterruptedException {
+            Thread.sleep(3000);
             WebElement priceElement = driver.findElement(By.xpath("(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]"));
             String actualPrice = priceElement.getText();
             return actualPrice.equals(price);
         }
 
-        public double getAmountInOrderbookPrice1(String price) {
+        public double getAmountInOrderbookPrice1(String price, double additionalAmount) {
             WebElement PriceOrderbook = driver.findElement(By.xpath("(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]"));
             int ob_size = PriceOrderbook.findElements(By.tagName("p")).size();
 
@@ -66,15 +67,18 @@ public class Orderbook{
                     String xpath_amount = "(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[2]";
                     String actual_amount = PriceOrderbook.findElement(By.xpath(xpath_amount)).getText();
                     double number_amount = Double.parseDouble(actual_amount);
-                    return number_amount;
+                    return number_amount + additionalAmount;
+
                 }
             }
 
-            return 0; // Return 0 or a specific default value if the price is not found
+            return 0.0; // Return 0 or a specific default value if the price is not found
         }
 
-        // Các phương thức và thuộc tính khác
+    public double getAmountInOrderbookPrice1(String s) {
+        return 0;
     }
+}
 
 
 
