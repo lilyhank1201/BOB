@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 
 import java.util.concurrent.TimeUnit;
 
-public class Orderbook{
-    public Orderbook(WebDriver driver) {
+public class OrderBookSell {
+    public OrderBookSell(WebDriver driver) {
     this.driver = driver;
 }
     private static WebDriver driver;
@@ -15,17 +15,17 @@ public class Orderbook{
 
     public static double getAmountInOrderbookPrice(String price) throws InterruptedException {
         Thread.sleep(2000);
-        WebElement PriceOrderbook = driver.findElement(By.xpath("(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]"));
+        WebElement PriceOrderbook = driver.findElement(By.xpath("(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[1]"));
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         int ob_size = PriceOrderbook.findElements(By.tagName("p")).size();
 
         for (int counter = 0; counter < ob_size; counter++) {
             int index = counter;
-            String xpath_price = "(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]";
+            String xpath_price = "(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[1]";
             String actual_price = PriceOrderbook.findElement(By.xpath(xpath_price)).getText();
 
             if (actual_price.equals(price)) {
-                String xpath_amount = "(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[2]";
+                String xpath_amount = "(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[2]";
                 String actual_amount = PriceOrderbook.findElement(By.xpath(xpath_amount)).getText();
                 double number_amount = Double.parseDouble(actual_amount);
                 return number_amount;
@@ -37,7 +37,7 @@ public class Orderbook{
 
 
     public static void main(String[] args) throws InterruptedException {
-        Orderbook helper = new Orderbook(driver);
+        OrderBookSell helper = new OrderBookSell(driver);
         String priceToFind = "100"; // Replace this with the desired price to find
         double amount = helper.getAmountInOrderbookPrice(priceToFind);
         System.out.println("Amount for price " + priceToFind + " is: " + amount);
@@ -47,24 +47,24 @@ public class Orderbook{
 
 
 
-        public boolean checkPriceExists(String price) throws InterruptedException {
+        public static boolean checkPriceExists(String price) throws InterruptedException {
             Thread.sleep(3000);
-            WebElement priceElement = driver.findElement(By.xpath("(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]"));
+            WebElement priceElement = driver.findElement(By.xpath("(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[1]"));
             String actualPrice = priceElement.getText();
             return actualPrice.equals(price);
-        }
+         }
 
         public double getAmountInOrderbookPrice1(String price, double additionalAmount) {
-            WebElement PriceOrderbook = driver.findElement(By.xpath("(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]"));
+            WebElement PriceOrderbook = driver.findElement(By.xpath("(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[1]"));
             int ob_size = PriceOrderbook.findElements(By.tagName("p")).size();
 
             for (int counter = 0; counter < ob_size; counter++) {
                 int index = counter;
-                String xpath_price = "(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[1]";
+                String xpath_price = "(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[1]";
                 String actual_price = PriceOrderbook.findElement(By.xpath(xpath_price)).getText();
 
                 if (actual_price.equals(price)) {
-                    String xpath_amount = "(//div[@class ='table__box-item'])[1]//div[@class ='item__number signle-orderbook']//p[2]";
+                    String xpath_amount = "(//div[@class ='table__box-item flex-end'])[1]//div[@class ='item__number red signle-orderbook']//p[2]";
                     String actual_amount = PriceOrderbook.findElement(By.xpath(xpath_amount)).getText();
                     double number_amount = Double.parseDouble(actual_amount);
                     return number_amount + additionalAmount;
