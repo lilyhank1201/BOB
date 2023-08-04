@@ -218,7 +218,7 @@ public class Spot_page extends CommonBase {
             if (priceExists) {
                 System.out.println(priceToFind + " có trên order book");
                 Thread.sleep(2000);
-                WebElement amountElement = driver.findElement((By) amount_buy_locator);
+                WebElement amountElement = driver.findElement((By) Amount_on_orderbook);
                 Thread.sleep(2000);
                 String currentAmountText = amountElement.getAttribute("value");
                 System.out.println("Số lượng hiện tại: " + currentAmountText);

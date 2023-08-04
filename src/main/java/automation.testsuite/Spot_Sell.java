@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 public class Spot_Sell extends CommonBase {
     WebDriver driver;
 
+
     @BeforeTest
     public void openChromeDriver() {
         driver = initChromeDriver(CT_Account.webURL);
@@ -28,7 +29,6 @@ public class Spot_Sell extends CommonBase {
 //    }
 
 
-
     @Test
     public void TotalSelllessthan10$ () throws InterruptedException {
         Login_page Login = new Login_page(driver);
@@ -44,4 +44,5 @@ public class Spot_Sell extends CommonBase {
         Spot_page_Sell Buy = new Spot_page_Sell(driver);
         Buy.OrderSellNotFill("0.11", "91");
     }
+
 }
